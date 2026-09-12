@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products } from '../data/products';
+
+const featured = products.slice(0, 3);
+---
+
+<BaseLayout title="PopShop — streetwear demo Deploy dev y prod">
+  <section class="hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-content wrap">
+      <p class="hero-brand"><span>PopShop</span></p>
+      <h1>Piezas con punch para el día a día.</h1>
+      <p>Demo estática de tienda: mira el catálogo, abre un producto y prueba el carrito local.</p>
+      <div class="cta-row">
+        <a class="btn btn-lemon" href="/tienda.html">Ver tienda</a>
+        <a class="btn btn-ghost" href="/nosotros.html">Qué es esto</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>Destacados</h2>
+          <p>Tres piezas para entrar en el mood PopShop.</p>
+        </div>
+        <a class="btn btn-ghost" href="/tienda.html">Catálogo completo</a>
+      </div>
+      <div class="product-grid">
+        {featured.map((product) => <ProductCard product={product} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

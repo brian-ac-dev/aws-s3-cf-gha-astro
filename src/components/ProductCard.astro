@@ -1,0 +1,22 @@
+---
+import type { Product } from '../data/products';
+import { formatPrice } from '../data/products';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+---
+
+<a class="product-card" href={`/producto/${product.slug}.html`}>
+  <div class="product-visual" style={`--accent: ${product.accent}`}>
+    <div class={`pattern pattern-${product.pattern}`}></div>
+    <div class="visual-sheen"></div>
+  </div>
+  <div class="product-meta">
+    <span class="category">{product.category}</span>
+    <h3>{product.name}</h3>
+    <span class="price">{formatPrice(product.price)}</span>
+  </div>
+</a>

@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { products, getProduct, formatPrice } from '../../data/products';
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { slug: product.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const product = getProduct(slug!);
+
+if (!product) {
+  return Astro.redirect('/404.html');
+}
+---
+
+<BaseLayout
+  title={`${product.name} — PopShop`}
+  description={product.tagline}
+>
+  <section class="wrap product-detail">
+    <div class="product-visual" style={`--accent: ${product.accent}; min-height: 420px`}>
+      <div class={`pattern pattern-${product.pattern}`}></div>
+      <div class="visual-sheen"></div>
+    </div>
+    <div class="detail-copy">
+      <p class="category">{product.category}</p>
+      <h1>{product.name}</h1>
+      <p class="price">{formatPrice(product.price)}</p>
+      <p>{product.description}</p>
+      <div class="cta-row">
+        <button class="btn btn-lemon" type="button" data-add-to-cart={product.slug}>
+          Añadir al carrito
+        </button>
+        <a class="btn btn-ghost" href="/tienda.html">Volver a tienda</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

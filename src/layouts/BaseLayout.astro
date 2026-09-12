@@ -1,0 +1,123 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'PopShop',
+  description = 'PopShop — tienda demo de streetwear y accesorios. Sitio estático.',
+} = Astro.props;
+
+const pathname = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav wrap" aria-label="Principal">
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true"></span>
+          PopShop
+        </a>
+        <ul class="nav-links">
+          <li>
+            <a
+              href="/tienda.html"
+              aria-current={pathname.startsWith('/tienda') ? 'page' : undefined}
+              >Tienda</a
+            >
+          </li>
+          <li class="hide-sm">
+            <a
+              href="/nosotros.html"
+              aria-current={pathname.startsWith('/nosotros') ? 'page' : undefined}
+              >Nosotros</a
+            >
+          </li>
+          <li>
+            <span class="cart-pill" title="Carrito demo (local)">
+              Carrito
+              <span class="cart-count" data-cart-count>0</span>
+            </span>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner wrap">
+        <p><strong>PopShop</strong> — demo estática para build y deploy.</p>
+        <p>Sin backend · carrito solo en este navegador</p>
+      </div>
+    </footer>
+
+    <script>
+      const KEY = 'popshop-cart';
+
+      function readCart(): { slug: string; qty: number }[] {
+        try {
+          const raw = localStorage.getItem(KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function writeCart(items: { slug: string; qty: number }[]) {
+        localStorage.setItem(KEY, JSON.stringify(items));
+        syncCount();
+      }
+
+      function syncCount() {
+        const total = readCart().reduce((n, i) => n + i.qty, 0);
+        document.querySelectorAll('[data-cart-count]').forEach((el) => {
+          el.textContent = String(total);
+        });
+      }
+
+      function addToCart(slug: string) {
+        const items = readCart();
+        const found = items.find((i) => i.slug === slug);
+        if (found) found.qty += 1;
+        else items.push({ slug, qty: 1 });
+        writeCart(items);
+      }
+
+      syncCount();
+
+      document.querySelectorAll('[data-add-to-cart]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const slug = btn.getAttribute('data-add-to-cart');
+          if (!slug) return;
+          addToCart(slug);
+          btn.textContent = 'Añadido ✓';
+          window.setTimeout(() => {
+            btn.textContent = 'Añadir al carrito';
+          }, 1400);
+        });
+      });
+    </script>
+  </body>
+</html>

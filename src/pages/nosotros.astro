@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Nosotros — PopShop"
+  description="PopShop es una demo de tienda estática hecha con Astro."
+>
+  <section class="section">
+    <div class="wrap">
+      <article class="about-panel">
+        <h1>PopShop es una demo.</h1>
+        <p>
+          Sitio 100% estático con Astro: catálogo, fichas de producto y un carrito que solo vive en
+          <code>localStorage</code>. Ideal para probar el build y subirlo a S3 + CloudFront.
+        </p>
+        <p>
+          No hay pagos ni backend. El objetivo es una vitrina rápida, limpia y lista para desplegar.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="/tienda.html">Ir a la tienda</a>
+        </div>
+      </article>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products } from '../data/products';
+---
+
+<BaseLayout
+  title="Tienda — PopShop"
+  description="Catálogo completo de PopShop. Demo estática de streetwear y accesorios."
+>
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>Tienda</h2>
+          <p>Once productos de ejemplo, listos para el build estático.</p>
+        </div>
+      </div>
+      <div class="product-grid">
+        {products.map((product) => <ProductCard product={product} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

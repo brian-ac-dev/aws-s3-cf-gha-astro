@@ -1,0 +1,54 @@
+name: Despliegue Continuo de Popshop a AWS CloudFront y S3
+run-name: Despliegue en ${{ github.ref_name }} por ${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - develop
+      - production
+    paths-ignore:
+      - README.md
+      - .gitignore
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # github.ref_name == 'main' && 'production' || 'develop'
+    environment: ${{ github.ref_name }}
+    steps:
+      # 1. Descargar el código fuente
+      - name: Checkout de código
+        uses: actions/checkout@v7
+
+      # 2. Forzar la instalación de Node 14 para la compatibilidad con Angular 10
+      - name: Configurar Node.js 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      # 3. Instalación limpia
+      - name: Instalar Dependencias
+        run: npm ci
+
+      # 4. Compilar App
+      - name: Compilar Proyecto Angular
+        run: npm run build
+
+      # 5. Configurar las credenciales de conexión con AWS
+      - name: Configurar credenciales de AWS
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::925774240266:role/github-actions-role
+          aws-region: us-east-1 # Sustituye por la región de tu infraestructura
+
+      # 6. Transferir la compilación directamente al bucket de S3
+      - name: Desplegar a S3
+        run: aws s3 sync ./dist/ s3://${{ vars.S3_BUCKET_NAME }} --delete
+
+      # 7. Invalidar la caché de CloudFront
+      - name: Invalidar caché de CloudFront
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
